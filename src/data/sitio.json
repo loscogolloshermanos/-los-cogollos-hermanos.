@@ -1,0 +1,19 @@
+{
+  "nombre": "LOS COGOLLOS HERMANOS",
+  "frase": "De la raíz a nuestra esencia.",
+  "introduccion": "Un espacio para conocer lo que nos inspira. Explora nuestra selección y descubre cada detalle, a tu ritmo.",
+  "historia": "[Texto editable] Este es el espacio para contar cómo nació LOS COGOLLOS HERMANOS y qué significa el proyecto para sus creadores.",
+  "filosofia": "[Texto editable] Comparte aquí los valores de la marca, tu visión y aquello que hace única tu forma de entender cada detalle.",
+  "logo": "images/logo.svg",
+  "redes": [
+    {
+      "nombre": "Instagram",
+      "url": ""
+    },
+    {
+      "nombre": "Facebook",
+      "url": ""
+    }
+  ],
+  "demostracion": true
+}

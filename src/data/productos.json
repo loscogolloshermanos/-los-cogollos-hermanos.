@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ejemplo-01", "nombre": "Esencia Esmeralda", "categoria": "Colección botánica",
+    "descripcion": "Una exploración visual de texturas naturales y matices verdes. Producto ficticio de demostración.",
+    "descripcionCompleta": "Este producto es ficticio y sirve únicamente para mostrar el diseño del catálogo. Sustituye este texto por información real y verificada. No representa un producto disponible para venta.",
+    "imagen": "images/esmeralda.svg", "galeria": ["images/esmeralda.svg", "images/ambar.svg"],
+    "caracteristicas": {"Referencia": "DEMO-01", "Tipo de contenido": "Ejemplo ficticio", "Ficha técnica": "Pendiente de información verificada"}, "disponible": true, "destacado": true
+  },
+  {
+    "id": "ejemplo-02", "nombre": "Horizonte Ámbar", "categoria": "Edición estudio",
+    "descripcion": "Tonos cálidos y una identidad que invita a mirar más de cerca. Producto ficticio de demostración.",
+    "descripcionCompleta": "Ejemplo ficticio para personalizar. La imagen es una ilustración original y las características son marcadores de posición, sin afirmaciones sanitarias ni técnicas.",
+    "imagen": "images/ambar.svg", "galeria": [],
+    "caracteristicas": {"Referencia": "DEMO-02", "Tipo de contenido": "Ejemplo ficticio", "Ficha técnica": "Pendiente de información verificada"}, "disponible": true, "destacado": false
+  },
+  {
+    "id": "ejemplo-03", "nombre": "Origen Nocturno", "categoria": "Colección botánica",
+    "descripcion": "Profundidad, equilibrio y una nueva perspectiva de lo natural. Producto ficticio de demostración.",
+    "descripcionCompleta": "Ejemplo ficticio con estado agotado para demostrar que los productos permanecen visibles. No indica existencias reales ni contiene información sobre un producto real.",
+    "imagen": "images/nocturno.svg", "galeria": [],
+    "caracteristicas": {"Referencia": "DEMO-03", "Tipo de contenido": "Ejemplo ficticio", "Ficha técnica": "Pendiente de información verificada"}, "disponible": false, "destacado": false
+  }
+]
