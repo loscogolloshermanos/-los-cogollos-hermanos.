@@ -80,8 +80,8 @@
     </p>
     <div class="note">
       Proyecto: <strong>lxuqqsrkqdctbinivvun</strong><br />Único administrador:
-      <strong>robrtmoral569@gmail.com</strong><br />No necesitas compartir
-      contraseñas, claves secretas ni enlaces de acceso.
+      <strong>La cuenta que autorices en Supabase</strong><br />No necesitas
+      compartir contraseñas, claves secretas ni enlaces de acceso.
     </div>
     <h2>1. Crear las tablas y proteger las fotos</h2>
     <ol>
@@ -90,7 +90,8 @@
         <strong>SQL Editor → New query</strong>.
       </li>
       <li>
-        Pulsa el botón de abajo, pega el script completo en la consulta y pulsa
+        Escribe el correo que autorizarás en el formulario de abajo, pulsa el
+        botón para copiar, pega el script completo en la consulta y pulsa
         <strong>Run</strong>. El script crea las tablas, permisos, funciones y
         almacenamiento privado. No sobrescribe cambios existentes si lo repites.
       </li>
@@ -99,8 +100,43 @@
         únicamente el mensaje del error.
       </li>
     </ol>
+    <p class="note">
+      Si el panel ya funciona, no necesitas repetir esta instalación. La
+      autorización existente se conserva.
+    </p>
+    <label for="setup-email"
+      >Correo a autorizar (solo para la instalación inicial)</label
+    >
+    <input
+      id="setup-email"
+      type="email"
+      required
+      autocomplete="off"
+      autocapitalize="none"
+      spellcheck="false"
+      style="
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        margin: 10px 0 18px;
+        background: #172411;
+        color: #e9efdf;
+        border: 1px solid #465c36;
+        border-radius: 6px;
+        font-size: 16px;
+      "
+    />
+    <p>
+      <small
+        >El correo se utiliza únicamente en tu navegador para preparar el
+        script. No se guarda ni se envía desde esta guía.</small
+      >
+    </p>
     <button id="copy">Copiar configuración SQL</button>
-    <a href="./setup.sql" download>Descargar SQL</a>
+    <a href="./setup.sql" download
+      >Descargar plantilla SQL (requiere sustituir el marcador de correo)</a
+    >
     <p id="status" role="status"></p>
     <details>
       <summary>Ver SQL para copiar manualmente</summary>
@@ -124,9 +160,9 @@ https://loscogolloshermanos.github.io/-los-cogollos-hermanos./?admin=1</pre>
     <h2>3. Crear tu usuario administrador</h2>
     <ol>
       <li>
-        En <strong>Authentication → Users</strong>, comprueba si existe
-        <code>robrtmoral569@gmail.com</code>. Tu cuenta de la plataforma
-        Supabase y el usuario de esta web son cosas distintas.
+        En <strong>Authentication → Users</strong>, comprueba si existe tu
+        correo administrador. Tu cuenta de la plataforma Supabase y el usuario
+        de esta web son cosas distintas.
       </li>
       <li>
         Si no existe, usa <strong>Add user → Invite user</strong> para invitar
@@ -246,7 +282,19 @@ https://loscogolloshermanos.github.io/-los-cogollos-hermanos./?admin=1</pre>
       copyButton.addEventListener("click", async () => {
         try {
           // The SQL is preloaded so iOS keeps the user gesture for clipboard access.
-          await navigator.clipboard.writeText(sql);
+          const input = document.getElementById("setup-email");
+          const email = input.value.trim().toLowerCase();
+          if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+            status.textContent =
+              "Escribe un correo válido para preparar la configuración.";
+            input.focus();
+            return;
+          }
+          const configured = sql.replaceAll(
+            "REEMPLAZAR_CORREO_ADMINISTRADOR",
+            email.replaceAll("'", "''"),
+          );
+          await navigator.clipboard.writeText(configured);
           status.textContent =
             "SQL copiado. Pégalo completo en SQL Editor y pulsa Run.";
         } catch {

@@ -2,12 +2,23 @@
 -- Es repetible: conserva borradores y publicaciones existentes.
 begin;
 
+-- Solo para instalaciones nuevas: sustituir el marcador por el correo elegido.
+-- En una instalación activa no hace falta volver a ejecutar este script.
+do $configure_admin$
+declare configured_email text := 'REEMPLAZAR_CORREO_ADMINISTRADOR';
+begin
+  if configured_email !~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' then
+    raise exception 'Indica un correo administrador válido antes de ejecutar la configuración.';
+  end if;
+end;
+$configure_admin$;
+
 create or replace function public.lch_is_admin()
 returns boolean language sql stable security definer set search_path = '' as $$
   select exists (
     select 1 from auth.users u
     where u.id = (select auth.uid())
-      and lower(u.email) = 'robrtmoral569@gmail.com'
+      and lower(u.email) = 'REEMPLAZAR_CORREO_ADMINISTRADOR'
       and u.email_confirmed_at is not null
       and coalesce(u.is_anonymous, false) = false
   );

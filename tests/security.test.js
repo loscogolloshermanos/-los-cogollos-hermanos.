@@ -8,7 +8,7 @@ const UNCONFIRMED = "33333333-3333-4333-8333-333333333333";
 const sql = readFileSync(
   new URL("../supabase/setup.sql", import.meta.url),
   "utf8",
-);
+).replaceAll("REEMPLAZAR_CORREO_ADMINISTRADOR", "admin@example.test");
 test("Permisos SQL: borradores, publicaciones, fotografías y conflictos", async (t) => {
   const db = new PGlite();
   try {
@@ -20,7 +20,7 @@ test("Permisos SQL: borradores, publicaciones, fotografías y conflictos", async
       create table storage.objects(id uuid,bucket_id text,name text);
       alter table storage.objects enable row level security;
       grant select,insert,delete on storage.objects to anon,authenticated;
-      insert into auth.users values('${ADMIN}','robrtmoral569@gmail.com',now(),false),('${OTHER}','other@example.com',now(),false),('${UNCONFIRMED}','RO B',null,false);`);
+      insert into auth.users values('${ADMIN}','admin@example.test',now(),false),('${OTHER}','other@example.com',now(),false),('${UNCONFIRMED}','RO B',null,false);`);
     await db.exec(sql);
     const seed = (
       await db.query("select document from public.lch_drafts where id=1")
@@ -92,7 +92,7 @@ test("Permisos SQL: borradores, publicaciones, fotografías y conflictos", async
       "El correo debe estar confirmado y pertenecer al UUID de la sesión",
       async () => {
         await db.query("update auth.users set email=$1 where id=$2", [
-          "robrtmoral569@gmail.com",
+          "admin@example.test",
           UNCONFIRMED,
         ]);
         await as("authenticated", UNCONFIRMED, async () =>
@@ -235,6 +235,29 @@ test("Permisos SQL: borradores, publicaciones, fotografías y conflictos", async
             .rows[0].document.productos.length,
           0,
         );
+      },
+    );
+    await t.test(
+      "La plantilla sin personalizar aborta sin cambiar la instalación",
+      async () => {
+        const template = readFileSync(
+          new URL("../supabase/setup.sql", import.meta.url),
+          "utf8",
+        );
+        await assert.rejects(db.exec(template), /correo administrador válido/);
+        await db.exec("rollback");
+        assert.equal(
+          (await db.query("select version from public.lch_publications"))
+            .rows[0].version,
+          4,
+        );
+        await as("authenticated", ADMIN, async () => {
+          assert.equal(
+            (await db.query("select public.lch_is_admin() as allowed")).rows[0]
+              .allowed,
+            true,
+          );
+        });
       },
     );
   } finally {

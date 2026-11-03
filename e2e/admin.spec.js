@@ -13,7 +13,7 @@ const png = Buffer.from(
 );
 async function setup(
   page,
-  { signedIn = false, email = "robrtmoral569@gmail.com", missing = false } = {},
+  { signedIn = false, email = "admin@example.test", missing = false } = {},
 ) {
   const state = {
     draft: structuredClone(seed),
@@ -91,7 +91,7 @@ async function setup(
             },
             404,
           )
-        : ok(email === "robrtmoral569@gmail.com");
+        : ok(email === "admin@example.test");
     if (path === "/rest/v1/lch_drafts") {
       state.draftReads++;
       return ok({ document: state.draft, version: state.version });
@@ -173,9 +173,15 @@ test("El acceso solo solicita un enlace sin permitir nuevos registros", async ({
 }) => {
   const state = await setup(page);
   await page.goto("/#/admin");
+  await expect(
+    page.getByRole("textbox", { name: "Correo administrador" }),
+  ).toHaveValue("");
+  await page
+    .getByRole("textbox", { name: "Correo administrador" })
+    .fill("admin@example.test");
   await page.getByRole("button", { name: "Enviar enlace de acceso" }).click();
   await expect(page.getByRole("status")).toContainText("recibirás");
-  expect(state.otp.email).toBe("robrtmoral569@gmail.com");
+  expect(state.otp.email).toBe("admin@example.test");
   expect(state.otp.create_user).toBe(false);
   expect(state.draftReads).toBe(0);
 });
@@ -411,3 +417,40 @@ for (const failureMode of ["png", "null", "throws"]) {
     expect(state.draft.productos[0].imagen).toMatch(/^media\/.+\.webp$/);
   });
 }
+
+test("La pantalla de acceso no revela ni preselecciona un correo", async ({
+  page,
+}) => {
+  await setup(page);
+  await page.goto("/#/admin");
+  const field = page.getByRole("textbox", { name: "Correo administrador" });
+  await expect(field).toHaveValue("");
+  await expect(field).toBeEditable();
+  await expect(field).toHaveAttribute("autocomplete", "off");
+  await expect(page.locator("body")).not.toContainText("admin@example.test");
+});
+
+test("Un correo no registrado recibe una respuesta genérica", async ({
+  page,
+}) => {
+  await setup(page);
+  await page.route(`${HOST}/auth/v1/otp**`, (route) =>
+    route.fulfill({
+      status: 400,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "otp_disabled",
+        message: "Signups not allowed for otp",
+      }),
+    }),
+  );
+  await page.goto("/#/admin");
+  await page
+    .getByRole("textbox", { name: "Correo administrador" })
+    .fill("unknown@example.test");
+  await page.getByRole("button", { name: "Enviar enlace de acceso" }).click();
+  await expect(page.getByRole("status")).toContainText(
+    "Si la cuenta está habilitada",
+  );
+  await expect(page.locator("body")).not.toContainText("Signups not allowed");
+});

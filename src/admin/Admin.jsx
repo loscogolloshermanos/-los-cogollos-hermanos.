@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Mail, LogOut, LockKeyhole, RefreshCw } from "lucide-react";
-import {
-  supabase,
-  publicSupabase,
-  ADMIN_EMAIL,
-  loginRedirect,
-} from "../services/supabase";
+import { supabase, publicSupabase, loginRedirect } from "../services/supabase";
 import { explainError } from "../utils/documento";
 import Editor from "./Editor";
 import "./admin.css";
@@ -65,7 +60,7 @@ export default function Admin() {
       try {
         const { data, error: e } = await supabase.auth.getUser();
         if (e) throw e;
-        if (data.user?.email?.toLowerCase() !== ADMIN_EMAIL) {
+        if (!data.user?.id) {
           if (live) setAccess("denied");
           return;
         }
@@ -145,6 +140,7 @@ export default function Admin() {
   );
 }
 function Login({ initialError }) {
+  const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(initialError);
@@ -187,16 +183,20 @@ function Login({ initialError }) {
     setMessage("");
     try {
       const { error: err } = await supabase.auth.signInWithOtp({
-        email: ADMIN_EMAIL,
+        email: email.trim().toLowerCase(),
         options: { shouldCreateUser: false, emailRedirectTo: loginRedirect() },
       });
-      if (err) throw err;
+      if (err && ![400, 401, 403, 404, 422].includes(err.status)) throw err;
       setMessage(
         "Si la cuenta está habilitada, recibirás un enlace para entrar. Revisa también el correo no deseado. Puedes abrirlo en Safari o Chrome.",
       );
       setCooldown(60);
     } catch (e) {
-      setError(explainError(e));
+      setError(
+        e?.status === 429 || /rate limit|too many/i.test(e?.message || "")
+          ? "Se han realizado demasiados intentos. Espera unos minutos antes de solicitar otro enlace."
+          : "No se pudo enviar la solicitud. Revisa tu conexión o inténtalo de nuevo más tarde.",
+      );
     } finally {
       setBusy(false);
     }
@@ -226,9 +226,14 @@ function Login({ initialError }) {
           Correo administrador
           <input
             type="email"
-            readOnly
-            value={ADMIN_EMAIL}
-            autoComplete="email"
+            name="admin-login-email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            inputMode="email"
           />
         </label>
         <button

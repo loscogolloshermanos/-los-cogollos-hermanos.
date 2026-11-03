@@ -20,7 +20,6 @@ export const publicSupabase = createClient(config.url, config.publishableKey, {
     detectSessionInUrl: false,
   },
 });
-export const ADMIN_EMAIL = "robrtmoral569@gmail.com";
 export function loginRedirect() {
   return new URL(`${import.meta.env.BASE_URL}?admin=1`, window.location.href)
     .href;

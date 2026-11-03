@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import App from "../pages/App";
 import { ImageContext } from "../components/ImageContext";
-import { supabase, ADMIN_EMAIL } from "../services/supabase";
+import { supabase } from "../services/supabase";
 import {
   readDraft,
   saveDraft,
@@ -362,7 +362,7 @@ export default function Editor({ onLogout }) {
             <h1>
               Administración<span>.</span>
             </h1>
-            <p>{ADMIN_EMAIL}</p>
+            <p>Sesión de administrador</p>
             <nav aria-label="Secciones del panel">
               {[
                 ["productos", "Productos", Package],
