@@ -15,12 +15,18 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     {
+      name: "webkit-mobile",
+      use: { ...devices["iPhone 13"], launchOptions: {} },
+    },
+    {
       name: "mobile",
       use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
     },
   ],
   webServer: {
-    command: "npm run dev -- --port 5173 --strictPort",
+    command: process.env.LCH_BROWSER_BUILD
+      ? "npm run preview -- --port 5173 --strictPort"
+      : "npm run dev -- --port 5173 --strictPort",
     url: "http://127.0.0.1:5173",
     reuseExistingServer: !process.env.CI,
   },

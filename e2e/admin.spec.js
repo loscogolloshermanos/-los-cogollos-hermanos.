@@ -8,7 +8,7 @@ const seed = JSON.parse(
 );
 const HOST = "https://lxuqqsrkqdctbinivvun.supabase.co";
 const png = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aMZkAAAAASUVORK5CYII=",
+  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR4nGNgaGD4D8YwBgAw9AX9i91uTAAAAABJRU5ErkJggg==",
   "base64",
 );
 async function setup(
@@ -133,6 +133,9 @@ async function setup(
         name,
         id: "image-id",
         created_at: new Date().toISOString(),
+        actualWebP:
+          req.postDataBuffer().includes(Buffer.from("RIFF")) &&
+          req.postDataBuffer().includes(Buffer.from("WEBP")),
       });
       return ok({ Key: `lch-images/media/${name}`, Id: "image-id" });
     }
@@ -349,3 +352,48 @@ test("La configuración pendiente bloquea solicitar correo y ofrece la guía", a
     page.getByRole("link", { name: "Ver guía de activación" }),
   ).toBeVisible();
 });
+
+for (const failureMode of ["png", "null", "throws"]) {
+  test(`Convierte la foto localmente cuando el navegador devuelve ${failureMode} al pedir WebP`, async ({
+    page,
+  }) => {
+    const state = await setup(page, { signedIn: true });
+    await page.addInitScript((mode) => {
+      const native = HTMLCanvasElement.prototype.toBlob;
+      HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
+        if (type !== "image/webp")
+          return native.call(this, callback, type, quality);
+        if (mode === "throws")
+          throw new DOMException("Unsupported format", "NotSupportedError");
+        if (mode === "null") {
+          queueMicrotask(() => callback(null));
+          return;
+        }
+        return native.call(this, callback, "image/png", quality);
+      };
+    }, failureMode);
+    const wasmRequests = [];
+    page.on("request", (r) => {
+      if (new URL(r.url()).pathname.endsWith(".wasm"))
+        wasmRequests.push(r.url());
+    });
+    await page.goto("/#/admin");
+    await page.getByRole("button", { name: "Elegir o subir foto" }).click();
+    await page
+      .locator("dialog input[type=file]")
+      .setInputFiles({
+        name: "foto-iphone.png",
+        mimeType: "image/png",
+        buffer: png,
+      });
+    await expect(
+      page.getByRole("dialog", { name: "Fotografías", exact: true }),
+    ).not.toBeVisible({ timeout: 15000 });
+    expect(state.files).toHaveLength(1);
+    expect(state.files[0].actualWebP).toBe(true);
+    expect(wasmRequests.length).toBeGreaterThan(0);
+    await page.getByRole("button", { name: "Guardar borrador" }).click();
+    await expect(page.getByRole("status")).toContainText("Borrador guardado");
+    expect(state.draft.productos[0].imagen).toMatch(/^media\/.+\.webp$/);
+  });
+}

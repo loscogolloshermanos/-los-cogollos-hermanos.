@@ -26,13 +26,20 @@ export async function optimizeImage(file) {
     if (!context)
       throw new Error("Este navegador no permite procesar la fotografía.");
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise((resolve) =>
-      canvas.toBlob(resolve, "image/webp", 0.84),
-    );
-    if (!blob || blob.type !== "image/webp")
-      throw new Error(
-        "Tu navegador no puede convertir a WebP. Prueba con una versión reciente de Safari o Chrome.",
+    let blob;
+    try {
+      blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/webp", 0.84),
       );
+    } catch {
+      // Some browsers throw instead of returning PNG/null for an unsupported format.
+    }
+    if (!blob || blob.type !== "image/webp") {
+      const { encodeWebP } = await import("./webpEncoder");
+      blob = await encodeWebP(
+        context.getImageData(0, 0, canvas.width, canvas.height),
+      );
+    }
     if (blob.size > MAX_STORED_BYTES)
       throw new Error("La imagen optimizada supera 5 MB. Reduce su tamaño.");
     return blob;
