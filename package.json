@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node scripts/validate-data.mjs && node scripts/prepare-setup.mjs && vite build",
+    "build": "node scripts/validate-data.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "check": "node scripts/validate-data.mjs",
     "test": "node --test src/utils/*.test.js tests/*.test.js",
-    "test:browser": "playwright test",
-    "predev": "node scripts/prepare-setup.mjs"
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "@jsquash/webp": "^1.5.0",

@@ -327,14 +327,6 @@ export default function Editor({ onLogout }) {
                 Cerrar sesión
               </button>
             </div>
-            <a
-              className="admin-guide"
-              href="./configuracion.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Activar Supabase: instrucciones y SQL
-            </a>
           </>
         )}
       </main>
@@ -393,14 +385,6 @@ export default function Editor({ onLogout }) {
                   : "Hay cambios pendientes de publicar."}
               </p>
             </div>
-            <a
-              href="./configuracion.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="admin-guide"
-            >
-              Ayuda y configuración
-            </a>
           </aside>
           <div className="admin-workspace">
             <div className="admin-toolbar">

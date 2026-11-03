@@ -272,13 +272,15 @@ test("Sube una fotografía optimizada y bloquea HEIC", async ({ page }) => {
 test("Si falta SQL no simula un panel operativo", async ({ page }) => {
   await setup(page, { signedIn: true, missing: true });
   await page.goto("/#/admin");
-  await expect(page.getByRole("alert")).toContainText("configuración SQL");
+  await expect(page.getByRole("alert")).toContainText(
+    "configuración del panel",
+  );
   await expect(
     page.getByRole("button", { name: "Guardar borrador" }),
   ).toHaveCount(0);
   await expect(
     page.getByRole("link", { name: "Guía de activación de Supabase" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
 });
 test("Procesa un enlace de correo y retira los tokens de la dirección", async ({
   page,
@@ -342,18 +344,20 @@ test("No descarta cambios al cancelar la salida del panel", async ({
     page.getByRole("textbox", { name: "Nombre", exact: true }),
   ).toHaveValue("Cambio protegido");
 });
-test("La configuración pendiente bloquea solicitar correo y ofrece la guía", async ({
+test("La configuración pendiente bloquea solicitar correo sin mostrar una guía", async ({
   page,
 }) => {
   await setup(page, { missing: true });
   await page.goto("/#/admin");
-  await expect(page.getByRole("status")).toContainText("Falta ejecutar");
+  await expect(page.getByRole("status")).toContainText(
+    "configuración del panel",
+  );
   await expect(
     page.getByRole("button", { name: "Enviar enlace de acceso" }),
   ).toBeDisabled();
   await expect(
     page.getByRole("link", { name: "Ver guía de activación" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
 });
 
 for (const failureMode of ["png", "null", "throws"]) {
@@ -453,4 +457,18 @@ test("Un correo no registrado recibe una respuesta genérica", async ({
     "Si la cuenta está habilitada",
   );
   await expect(page.locator("body")).not.toContainText("Signups not allowed");
+});
+
+test("La pantalla de acceso solo muestra el formulario y la ayuda de sesión", async ({
+  page,
+}) => {
+  await setup(page);
+  await page.goto("/#/admin");
+  await expect(
+    page.getByRole("textbox", { name: "Correo administrador" }),
+  ).toBeVisible();
+  await expect(page.locator('a[href*="configuracion.html"]')).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText(
+    "Si todavía no activaste",
+  );
 });

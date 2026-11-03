@@ -125,14 +125,6 @@ export default function Admin() {
                 Cerrar sesión
               </button>
             </div>
-            <a
-              className="admin-guide"
-              href="./configuracion.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Guía de activación de Supabase
-            </a>
           </>
         )}
       </section>
@@ -194,7 +186,7 @@ function Login({ initialError }) {
     } catch (e) {
       setError(
         e?.status === 429 || /rate limit|too many/i.test(e?.message || "")
-          ? "Se han realizado demasiados intentos. Espera unos minutos antes de solicitar otro enlace."
+          ? "El servicio de correo ha alcanzado su límite de envíos. No se ha enviado otro enlace. Espera antes de volver a solicitarlo."
           : "No se pudo enviar la solicitud. Revisa tu conexión o inténtalo de nuevo más tarde.",
       );
     } finally {
@@ -205,8 +197,8 @@ function Login({ initialError }) {
     <>
       {setup === "pending" && (
         <div className="admin-alert" role="status">
-          El panel está preparado. Falta ejecutar la configuración inicial en
-          Supabase. Abre la guía de activación antes de solicitar acceso.
+          La configuración del panel necesita revisión. Contacta con quien
+          administra el proyecto.
         </div>
       )}
       {setup === "checking" && (
@@ -260,17 +252,8 @@ function Login({ initialError }) {
         </div>
       )}
       <p className="admin-help">
-        El enlace es personal y caduca. No lo compartas. Si todavía no activaste
-        Supabase, completa primero la configuración.
+        El enlace es personal y caduca. No lo compartas.
       </p>
-      <a
-        className="admin-guide"
-        href="./configuracion.html"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Ver guía de activación
-      </a>
     </>
   );
 }

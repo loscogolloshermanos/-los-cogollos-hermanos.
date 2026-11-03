@@ -4,7 +4,7 @@ Catálogo informativo con panel privado, React, Vite, Tailwind y Supabase. El fr
 
 ## Panel de administración
 
-Accede a `/#/admin` dentro de la URL de la web. El correo autorizado se configura únicamente en Supabase y no se publica ni se rellena por defecto en el formulario. Para usarlo por primera vez, completa [la guía de activación](docs/ADMINISTRACION.md): ejecutar SQL, configurar las URL de retorno e invitar al usuario. El panel muestra un enlace a `configuracion.html` con instrucciones y un botón para copiar el SQL.
+Accede a `/#/admin` dentro de la URL de la web. El correo autorizado se configura únicamente en Supabase y no se publica ni se rellena por defecto en el formulario. Para usarlo por primera vez, completa [la guía de activación](docs/ADMINISTRACION.md): ejecutar SQL, configurar las URL de retorno e invitar al usuario. Las instrucciones de instalación y el SQL se conservan en el repositorio; no se publican como páginas ni descargas en la web.
 
 Desde el panel puedes crear, modificar, ordenar y eliminar productos; subir y ordenar fotos; editar textos, logotipo y redes; guardar borradores, previsualizar y publicar. Guardar no altera la publicación. Las fotos nuevas son privadas hasta publicar. Las claves públicas no son permisos de administrador.
 

@@ -5,7 +5,7 @@
 - El acceso empieza con un campo de correo vacío, editable, sin identificador administrador incrustado. Se solicita al navegador que no lo autocomplete; las preferencias del usuario pueden prevalecer.
 - El frontend no contiene la dirección del propietario. Después de verificar la sesión, la función protegida de Supabase decide si corresponde al administrador.
 - La barra del panel muestra «Sesión de administrador». Las respuestas del formulario no confirman si un correo está registrado o autorizado.
-- La guía y el SQL públicos no contienen un correo real. La plantilla usa un marcador y aborta sin cambios si no se personaliza. La guía prepara el SQL únicamente en el navegador, sin enviar ni almacenar ese correo.
+- La guía de instalación y el SQL descargable se retiraron del sitio publicado. Las instrucciones técnicas y una plantilla sin correo personal se conservan en el repositorio. La plantilla aborta sin cambios si no se personaliza.
 - Las pruebas utilizan correos y UUID ficticios. La documentación no identifica al propietario.
 
 La autorización existente en Supabase no cambia. No hay que repetir el SQL, crear usuarios ni reinvitar al administrador.

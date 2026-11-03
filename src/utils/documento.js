@@ -149,7 +149,7 @@ export function explainError(error) {
     ) ||
     ["PGRST205", "PGRST202"].includes(error?.code)
   )
-    return "Falta ejecutar la configuración SQL de Supabase. Consulta la guía de activación.";
+    return "La configuración del panel necesita revisión. Contacta con quien administra el proyecto.";
   if (
     /ADMIN_ONLY|permission denied|row-level security|not authorized/i.test(msg)
   )
