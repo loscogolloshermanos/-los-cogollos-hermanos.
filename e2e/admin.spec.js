@@ -133,9 +133,6 @@ async function setup(
         name,
         id: "image-id",
         created_at: new Date().toISOString(),
-        actualWebP:
-          req.postDataBuffer().includes(Buffer.from("RIFF")) &&
-          req.postDataBuffer().includes(Buffer.from("WEBP")),
       });
       return ok({ Key: `lch-images/media/${name}`, Id: "image-id" });
     }
@@ -359,6 +356,16 @@ for (const failureMode of ["png", "null", "throws"]) {
   }) => {
     const state = await setup(page, { signedIn: true });
     await page.addInitScript((mode) => {
+      // WebKit omits multipart file bytes in Playwright request.postDataBuffer.
+      // Inspect the actual encoder Blob in the page instead, on every engine.
+      const NativeBlob = window.Blob;
+      window.Blob = new Proxy(NativeBlob, {
+        construct(Target, args) {
+          const blob = new Target(...args);
+          if (blob.type === "image/webp") window.__encodedWebP = blob;
+          return blob;
+        },
+      });
       const native = HTMLCanvasElement.prototype.toBlob;
       HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
         if (type !== "image/webp")
@@ -379,18 +386,25 @@ for (const failureMode of ["png", "null", "throws"]) {
     });
     await page.goto("/#/admin");
     await page.getByRole("button", { name: "Elegir o subir foto" }).click();
-    await page
-      .locator("dialog input[type=file]")
-      .setInputFiles({
-        name: "foto-iphone.png",
-        mimeType: "image/png",
-        buffer: png,
-      });
+    await page.locator("dialog input[type=file]").setInputFiles({
+      name: "foto-iphone.png",
+      mimeType: "image/png",
+      buffer: png,
+    });
     await expect(
       page.getByRole("dialog", { name: "Fotografías", exact: true }),
     ).not.toBeVisible({ timeout: 15000 });
     expect(state.files).toHaveLength(1);
-    expect(state.files[0].actualWebP).toBe(true);
+    expect(
+      await page.evaluate(async () => {
+        const bytes = new Uint8Array(await window.__encodedWebP.arrayBuffer());
+        const decode = new TextDecoder();
+        return (
+          decode.decode(bytes.slice(0, 4)) === "RIFF" &&
+          decode.decode(bytes.slice(8, 12)) === "WEBP"
+        );
+      }),
+    ).toBe(true);
     expect(wasmRequests.length).toBeGreaterThan(0);
     await page.getByRole("button", { name: "Guardar borrador" }).click();
     await expect(page.getByRole("status")).toContainText("Borrador guardado");
