@@ -1,6 +1,14 @@
 # LOS COGOLLOS HERMANOS
 
-Catálogo informativo en React + Vite + Tailwind CSS y JavaScript, con iconos Lucide. Sin carrito, pedidos, pagos, cuentas, servidor ni base de datos. Los tres productos, sus ilustraciones y estados son ejemplos ficticios, sin disponibilidad real. Publicación configurada mediante GitHub Actions y GitHub Pages.
+Catálogo informativo con panel privado, React, Vite, Tailwind y Supabase. El frontend se aloja en GitHub Pages; productos, textos y fotografías se administran desde el navegador. Sin compras, pagos ni pedidos.
+
+## Panel de administración
+
+Accede a `/#/admin` dentro de la URL de la web. El único correo autorizado es **robrtmoral569@gmail.com**. Para usarlo por primera vez, completa [la guía de activación](docs/ADMINISTRACION.md): ejecutar SQL, configurar las URL de retorno e invitar al usuario. El panel muestra un enlace a `configuracion.html` con instrucciones y un botón para copiar el SQL.
+
+Desde el panel puedes crear, modificar, ordenar y eliminar productos; subir y ordenar fotos; editar textos, logotipo y redes; guardar borradores, previsualizar y publicar. Guardar no altera la publicación. Las fotos nuevas son privadas hasta publicar. Las claves públicas no son permisos de administrador.
+
+Después de activar Supabase, **los cambios de catálogo se hacen desde el panel**, sin modificar JSON ni recompilar. Los JSON originales se conservan solo como semilla de los ejemplos ficticios. La sección siguiente describe el proyecto inicial y la personalización por código; la administración remota es la fuente de verdad una vez activada.
 
 ## 1. Ejecutar localmente
 

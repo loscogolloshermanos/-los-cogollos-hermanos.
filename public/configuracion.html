@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Activar el panel — Los Cogollos Hermanos</title>
+    <style>
+      body {
+        background: #101810;
+        color: #e9efdf;
+        font:
+          16px/1.8 system-ui,
+          sans-serif;
+        max-width: 800px;
+        margin: auto;
+        padding: 35px 22px 70px;
+      }
+      h1 {
+        font-size: 34px;
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 23px;
+        color: #c6e9a0;
+        margin-top: 40px;
+      }
+      a {
+        color: #c6e9a0;
+      }
+      code,
+      pre {
+        background: #22331b;
+        border: 1px solid #455c35;
+        border-radius: 5px;
+        padding: 5px;
+        overflow-wrap: anywhere;
+        font-size: 13px;
+      }
+      pre {
+        white-space: pre-wrap;
+        padding: 15px;
+      }
+      button {
+        background: #c6e9a0;
+        color: #17220f;
+        border: 0;
+        border-radius: 6px;
+        padding: 15px 20px;
+        font: 600 15px system-ui;
+        cursor: pointer;
+      }
+      .note {
+        border: 1px solid #465c36;
+        padding: 18px;
+        border-radius: 8px;
+        background: #1a2616;
+      }
+      li {
+        margin-bottom: 12px;
+      }
+      strong {
+        color: #d3ecba;
+      }
+      #status {
+        color: #c6e9a0;
+      }
+      small {
+        color: #a1b191;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="./#/admin">← Volver al panel</a>
+    <h1>Activa tu panel privado</h1>
+    <p>
+      Configuración inicial en tu proyecto Supabase. La clave pública conecta la
+      web, pero no crea tablas ni configura el acceso.
+    </p>
+    <div class="note">
+      Proyecto: <strong>lxuqqsrkqdctbinivvun</strong><br />Único administrador:
+      <strong>robrtmoral569@gmail.com</strong><br />No necesitas compartir
+      contraseñas, claves secretas ni enlaces de acceso.
+    </div>
+    <h2>1. Crear las tablas y proteger las fotos</h2>
+    <ol>
+      <li>
+        En Supabase, abre este proyecto y entra a
+        <strong>SQL Editor → New query</strong>.
+      </li>
+      <li>
+        Pulsa el botón de abajo, pega el script completo en la consulta y pulsa
+        <strong>Run</strong>. El script crea las tablas, permisos, funciones y
+        almacenamiento privado. No sobrescribe cambios existentes si lo repites.
+      </li>
+      <li>
+        Espera el resultado correcto antes de continuar. Si falla, comparte
+        únicamente el mensaje del error.
+      </li>
+    </ol>
+    <button id="copy">Copiar configuración SQL</button>
+    <a href="./setup.sql" download>Descargar SQL</a>
+    <p id="status" role="status"></p>
+    <details>
+      <summary>Ver SQL para copiar manualmente</summary>
+      <pre id="sql">Abre este apartado y espera a que cargue el script.</pre>
+    </details>
+    <h2>2. Autorizar el retorno a tu web</h2>
+    <p>En <strong>Authentication → URL Configuration</strong>:</p>
+    <p><strong>Site URL:</strong></p>
+    <pre>https://loscogolloshermanos.github.io/-los-cogollos-hermanos./</pre>
+    <p>
+      Añade esta dirección exacta a <strong>Redirect URLs</strong> y guarda:
+    </p>
+    <pre>
+https://loscogolloshermanos.github.io/-los-cogollos-hermanos./?admin=1</pre>
+    <p>
+      Para desarrollo local, opcionalmente añade
+      <code>http://localhost:5173/?admin=1</code>. Conserva la plantilla
+      predeterminada de Magic Link que utiliza
+      <code>{{ .ConfirmationURL }}</code>.
+    </p>
+    <h2>3. Crear tu usuario administrador</h2>
+    <ol>
+      <li>
+        En <strong>Authentication → Users</strong>, comprueba si existe
+        <code>robrtmoral569@gmail.com</code>. Tu cuenta de la plataforma
+        Supabase y el usuario de esta web son cosas distintas.
+      </li>
+      <li>
+        Si no existe, usa <strong>Add user → Invite user</strong> para invitar
+        ese correo. Abre el correo y acepta la invitación para verificarlo. Si
+        solicita una URL de retorno, usa la dirección del paso anterior.
+      </li>
+      <li>
+        En <strong>Authentication → Providers / Sign In → Email</strong>, mantén
+        Email activado. Desactiva <strong>Allow new users to sign up</strong> y
+        el acceso anónimo. No necesitas habilitar confirmaciones por teléfono ni
+        contraseñas para el panel.
+      </li>
+    </ol>
+    <p class="note">
+      El correo debe quedar confirmado. Aunque otra cuenta consiguiera una
+      sesión, los permisos del servidor le impiden editar datos, leer borradores
+      o subir fotografías.
+    </p>
+    <h2>4. Comprobar el acceso por correo</h2>
+    <p>
+      Abre <a href="./#/admin">tu panel</a> y pulsa
+      <strong>Enviar enlace de acceso</strong>. Abre el enlace del correo y
+      revisa también spam. Puedes abrirlo en otro navegador: el acceso usa el
+      enlace, sin depender de una contraseña ni del navegador que lo solicitó.
+    </p>
+    <p>
+      Supabase limita los envíos y su correo predeterminado puede restringir
+      destinatarios a miembros del proyecto. Si indica
+      <strong>Email address not authorized</strong>, verifica que el correo
+      administrador sea miembro de la organización o configura tu propio
+      <strong>SMTP</strong> en Authentication para un uso continuo. No envíes
+      credenciales SMTP por el chat. Si aparece <strong>rate limit</strong>,
+      espera al intervalo indicado en Supabase.
+    </p>
+    <h2>5. Administrar y publicar</h2>
+    <ul>
+      <li>
+        <strong>Productos:</strong> crea, edita, ordena o elimina. «Incluir al
+        publicar» controla si aparece en el catálogo.
+      </li>
+      <li>
+        <strong>Fotografías:</strong> sube JPEG, PNG o WebP hasta 15 MB. Se
+        convierten a WebP de hasta 1800 px y 5 MB. Para HEIC, exporta primero a
+        JPEG.
+      </li>
+      <li>
+        <strong>Textos y marca:</strong> cambia nombre, textos, redes, logotipo
+        y portada. Mantén los avisos de demostración mientras queden ejemplos
+        ficticios.
+      </li>
+      <li>
+        <strong>Guardar borrador:</strong> conserva los cambios privados.
+        <strong>Vista previa:</strong> muestra cómo quedarán antes de
+        publicarlos.
+      </li>
+      <li>
+        <strong>Publicar:</strong> sustituye el contenido público por el
+        borrador guardado. Los visitantes lo verán al recargar.
+      </li>
+      <li>
+        Para eliminar una fotografía usada, retírala del contenido, guarda y
+        publica; después elimínala de la biblioteca.
+      </li>
+      <li>
+        «Descargar copia» respalda textos y referencias a imágenes; no descarga
+        los archivos de imagen. Conserva tus fotografías originales.
+      </li>
+    </ul>
+    <p>
+      Las fotos están en un bucket privado. Solo se firman enlaces temporales
+      para imágenes publicadas o para tu sesión administradora. Una imagen ya
+      publicada y descargada por un visitante no puede retirarse de sus
+      dispositivos; los enlaces firmados emitidos pueden funcionar hasta una
+      hora después de retirar la foto.
+    </p>
+    <h2>Comprobación final</h2>
+    <p>
+      Desde una ventana de incógnito, comprueba que se ve el catálogo y que un
+      producto oculto no aparece. Edita un texto, guarda y confirma que aún no
+      cambia en esa ventana; después publica y recarga para ver el resultado.
+    </p>
+    <p>
+      <small
+        >La web sigue siendo informativa. No incluye compras, reservas ni
+        pedidos.</small
+      >
+    </p>
+    <script type="module">
+      let sql = "";
+      const status = document.getElementById("status");
+      async function load() {
+        if (!sql) {
+          const r = await fetch("./setup.sql", { cache: "no-store" });
+          if (!r.ok)
+            throw new Error("No se pudo descargar el SQL. Recarga la página.");
+          sql = await r.text();
+          document.getElementById("sql").textContent = sql;
+        }
+        return sql;
+      }
+      document.querySelector("details").addEventListener("toggle", (e) => {
+        if (e.target.open)
+          load().catch((err) => (status.textContent = err.message));
+      });
+      const copyButton = document.getElementById("copy");
+      copyButton.disabled = true;
+      copyButton.textContent = "Preparando configuración…";
+      load()
+        .then(() => {
+          copyButton.disabled = false;
+          copyButton.textContent = "Copiar configuración SQL";
+        })
+        .catch((e) => {
+          status.textContent = e.message;
+          copyButton.textContent = "Usa el enlace para descargar SQL";
+        });
+      copyButton.addEventListener("click", async () => {
+        try {
+          // The SQL is preloaded so iOS keeps the user gesture for clipboard access.
+          await navigator.clipboard.writeText(sql);
+          status.textContent =
+            "SQL copiado. Pégalo completo en SQL Editor y pulsa Run.";
+        } catch {
+          status.textContent =
+            "No se pudo copiar automáticamente. Descarga el SQL o abre «Ver SQL» para copiarlo manualmente.";
+          document.querySelector("details").open = true;
+        }
+      });
+    </script>
+  </body>
+</html>
